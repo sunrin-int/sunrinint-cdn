@@ -3,6 +3,7 @@ import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
 import { swagger } from './swagger';
 import { Logger } from '@nestjs/common';
+import { mkdir } from 'fs';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -10,6 +11,14 @@ async function bootstrap() {
 
   const servicePort = config.get<string>('PORT', '3000');
   const NODE_ENV = config.get<string>('NODE_ENV', 'development');
+
+  mkdir(
+    config.get<string>('UPLOAD_PATH', './upload'),
+    { recursive: true },
+    (err) => {
+      if (err) throw err;
+    },
+  );
 
   if (config.get<boolean>('SWAGGER_ENABLED', NODE_ENV === 'development')) {
     await swagger(app);
