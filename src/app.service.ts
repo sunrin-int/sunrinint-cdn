@@ -8,7 +8,7 @@ export class AppService {
 
   upload(file: Express.Multer.File): UploadFile {
     return {
-      location: `${this.configService.get('BASE_URL')}/${file.filename}`,
+      location: `${this.configService.get('ORIGIN')}/${file.filename}`,
     };
   }
 }

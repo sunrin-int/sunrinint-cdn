@@ -1,0 +1,13 @@
+version: '2.0'
+
+services:
+  server:
+    image: 'ghcr.io/jungvengers/sunrinsecurity-cdn-v1:master'
+    env_file:
+      - .env
+    environment:
+      - PORT=3000
+    ports:
+      - 4000:3000
+    extra_hosts:
+      - host.docker.internal:host-gateway
