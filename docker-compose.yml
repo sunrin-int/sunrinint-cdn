@@ -7,7 +7,12 @@ services:
       - .env
     environment:
       - PORT=3000
+    volumes:
+      - upload:/app/upload
     ports:
       - 4000:3000
     extra_hosts:
       - host.docker.internal:host-gateway
+      
+volumes:
+  upload:
