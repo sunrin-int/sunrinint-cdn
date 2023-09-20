@@ -4,6 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import { swagger } from './swagger';
 import { Logger } from '@nestjs/common';
 import { mkdir } from 'fs';
+import { CorsOptions } from '@nestjs/common/interfaces/external/cors-options.interface';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -20,12 +21,25 @@ async function bootstrap() {
     },
   );
 
+  let CORS_ORIGIN: CorsOptions['origin'] = [];
+  if (config.get<string>('CORS_ORIGIN')) {
+    CORS_ORIGIN.push(...config.get<string>('CORS_ORIGIN', '*').split(','));
+  }
+  if (config.get<string>('CORS_REGEX_ORIGIN')) {
+    CORS_ORIGIN.push(
+      ...config
+        .get<string>('CORS_REGEX_ORIGIN', '')
+        .split(',')
+        .map((regex) => new RegExp(regex)),
+    );
+  }
+  if (CORS_ORIGIN.length === 0) {
+    CORS_ORIGIN = true;
+  }
+
   app.enableCors({
-    origin: config.get<string>('CORS_ORIGIN', '*'),
-    methods: config.get<string>(
-      'CORS_METHODS',
-      'GET,HEAD,PUT,PATCH,POST,DELETE',
-    ),
+    origin: CORS_ORIGIN,
+    methods: config.get<string>('CORS_METHODS', 'GET,PUT,PATCH,POST,DELETE'),
     credentials: config.get<boolean>('CORS_CREDENTIALS', true),
     preflightContinue: config.get<boolean>('CORS_PREFLIGHT', false),
     optionsSuccessStatus: config.get<number>('CORS_OPTIONS_STATUS', 204),
