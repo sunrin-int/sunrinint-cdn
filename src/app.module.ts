@@ -33,6 +33,9 @@ import { randomBytes } from 'crypto';
       imports: [ConfigModule],
       useFactory: async (config: ConfigService) => ({
         dest: config.get('UPLOAD_PATH', './upload'),
+        limits: {
+          fileSize: config.get('UPLOAD_LIMIT', 1024 * 1024 * 5),
+        },
         storage: diskStorage({
           destination: (req, file, cb) => {
             cb(null, config.get('UPLOAD_PATH', './upload'));
