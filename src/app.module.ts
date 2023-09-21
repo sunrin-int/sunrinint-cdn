@@ -8,6 +8,7 @@ import { ConfigValidator } from './validators/config';
 import { extname, join } from 'path';
 import { diskStorage } from 'multer';
 import { randomBytes } from 'crypto';
+import * as bytes from 'bytes';
 
 @Module({
   imports: [
@@ -34,7 +35,7 @@ import { randomBytes } from 'crypto';
       useFactory: async (config: ConfigService) => ({
         dest: config.get('UPLOAD_PATH', './upload'),
         limits: {
-          fileSize: config.get('UPLOAD_LIMIT', 1024 * 1024 * 5),
+          fileSize: bytes(config.get<string>('UPLOAD_LIMIT', '5MB')),
         },
         storage: diskStorage({
           destination: (req, file, cb) => {
